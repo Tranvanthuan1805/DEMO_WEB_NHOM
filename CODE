@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather & Life</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+
+  <style>
+    .weather-card { backdrop-filter: blur(8px); background: rgba(255, 255, 255, 0.8); transition: transform 0.3s ease; }
+    .weather-card:hover { transform: scale(1.05); }
+    #map { height: 400px; }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans">
+
+<header class="fixed w-full top-0 z-50 bg-white shadow">
+  <nav class="container mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="text-2xl font-['Pacifico'] text-blue-500">Weather & Life</div>
+    
+<div id="clock" class="text-lg text-gray-700"></div>
+<script>
+  function updateClock() {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+</script>
+<div class="flex gap-6">
+      <a href="#weather" class="hover:text-blue-500">Thời tiết</a>
+      <a href="#sos" class="hover:text-blue-500">SOS</a>
+      <a href="#plants" class="hover:text-blue-500">Cây trồng</a>
+      <a href="#alerts" class="hover:text-blue-500">Cảnh báo</a>
+    </div>
+    <div class="relative">
+      <input id="locationSearch" type="text" placeholder="Tìm kiếm địa điểm..." class="pl-10 pr-4 py-2 rounded-full bg-gray-100 w-64">
+      <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+    </div>
+  </nav>
+</header>
+
+<main class="pt-20">
+  <section class="h-[600px] bg-cover bg-center flex items-center justify-center text-white" style="background-image: url('https://github.com/Tranvanthuan1805/Image/blob/main/Yellow%20and%20White%20Minimalist%20Praise%20and%20Worship%20YouTube%20Thumbnail.png?raw=true');">
+    <div class="text-center">
+      <h1 class="text-5xl font-bold mb-4">Theo dõi thời tiết thông minh</h1>
+      <p class="text-xl mb-6">Dự báo chính xác - Bảo vệ cuộc sống</p>
+      <button class="bg-blue-500 text-white px-6 py-3 rounded-full hover:bg-blue-600" onclick="locateUser()">Xem thời tiết của bạn</button>
+<p class="text-lg mt-4">Phát triển bởi đội: Silent Vision</p>
+
+    </div>
+  </section>
+
+  <section class="container mx-auto px-6 py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="weather-card p-6 rounded-lg shadow">
+      <i class="ri-temp-hot-line text-blue-500 text-3xl mb-4"></i>
+      <h3 class="text-xl font-semibold mb-2">Thời tiết địa phương</h3>
+      <p class="text-gray-600 mb-4">Xem chi tiết nhiệt độ, độ ẩm, gió tại vị trí của bạn.</p>
+      <button class="text-blue-500 hover:underline" onclick="alert('Xem chi tiết thời tiết địa phương!')">Xem chi tiết</button>
+    </div>
+    <div class="weather-card p-6 rounded-lg shadow">
+      <i class="ri-alarm-warning-line text-red-500 text-3xl mb-4"></i>
+      <h3 class="text-xl font-semibold mb-2">SOS Khẩn cấp</h3>
+      <p class="text-gray-600 mb-4">Gửi tín hiệu khẩn cấp đến đội cứu hộ.</p>
+      <button class="text-red-500 hover:underline" onclick="alert('Đã gửi tín hiệu SOS khẩn cấp!')">Gọi ngay</button>
+    </div>
+    <div class="weather-card p-6 rounded-lg shadow">
+      <i class="ri-plant-line text-green-500 text-3xl mb-4"></i>
+      <h3 class="text-xl font-semibold mb-2">Gợi ý cây trồng</h3>
+      <p class="text-gray-600 mb-4">Tư vấn cây trồng phù hợp với thời tiết.</p>
+      <button class="text-green-500 hover:underline" onclick="alert('Đây là các gợi ý cây trồng phù hợp với thời tiết hiện tại.')">Xem gợi ý</button>
+    </div>
+    <div class="weather-card p-6 rounded-lg shadow">
+      <i class="ri-thunderstorms-line text-yellow-500 text-3xl mb-4"></i>
+      <h3 class="text-xl font-semibold mb-2">Cảnh báo thiên tai</h3>
+      <p class="text-gray-600 mb-4">Cảnh báo nguy hiểm thiên tai sớm nhất.</p>
+      <button class="text-yellow-500 hover:underline" onclick="alert('Đây là các cảnh báo thiên tai cập nhật mới nhất.')">Xem cảnh báo</button>
+    </div>
+  </section>
+
+  
+<section class="container mx-auto px-6 py-16">
+  <h2 class="text-3xl font-bold text-center mb-6">Dự báo 7 ngày tới</h2>
+  
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="bg-white rounded-lg shadow p-6 text-center">
+      <i class="ri-temp-hot-line text-red-500 text-4xl mb-4"></i>
+      <h3 class="text-xl font-semibold mb-2">Nhiệt độ</h3>
+      <div id="temperatureChart" class="h-[200px]"></div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6 text-center">
+      <i class="ri-drop-line text-blue-500 text-4xl mb-4"></i>
+      <h3 class="text-xl font-semibold mb-2">Độ ẩm</h3>
+      <div id="humidityChart" class="h-[200px]"></div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6 text-center">
+      <i class="ri-cloud-line text-green-500 text-4xl mb-4"></i>
+      <h3 class="text-xl font-semibold mb-2">Lượng mưa</h3>
+      <div id="rainfallChart" class="h-[200px]"></div>
+    </div>
+  </div>
+
+  <h2 class="text-3xl font-bold text-center my-12">Bản đồ tương tác</h2>
+  <div id="map" class="rounded-lg shadow"></div>
+</section>
+
+</main>
+
+<footer class="bg-gray-900 text-white py-8 text-center">
+  &copy; 2025 Weather & Life. Tất cả quyền được bảo lưu.
+</footer>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+
+const temperatureChart = echarts.init(document.getElementById("temperatureChart"));
+temperatureChart.setOption({
+  tooltip: { trigger: "axis" },
+  xAxis: { type: "category", data: ["T2", "T3", "T4", "T5", "T6", "T7", "CN"] },
+  yAxis: { type: "value" },
+  series: [{ name: "Nhiệt độ", type: "line", data: [28, 29, 31, 30, 29, 27, 28], smooth: true,
+             lineStyle: { color: "#FF6347" }, areaStyle: { color: "#FFE0E0" } }]
+});
+
+const humidityChart = echarts.init(document.getElementById("humidityChart"));
+humidityChart.setOption({
+  tooltip: { trigger: "axis" },
+  xAxis: { type: "category", data: ["T2", "T3", "T4", "T5", "T6", "T7", "CN"] },
+  yAxis: { type: "value" },
+  series: [{ name: "Độ ẩm", type: "bar", data: [70, 75, 65, 80, 85, 78, 72],
+             itemStyle: { color: "#1E90FF" } }]
+});
+
+const rainfallChart = echarts.init(document.getElementById("rainfallChart"));
+rainfallChart.setOption({
+  tooltip: { trigger: "axis" },
+  xAxis: { type: "category", data: ["T2", "T3", "T4", "T5", "T6", "T7", "CN"] },
+  yAxis: { type: "value" },
+  series: [{ name: "Lượng mưa", type: "bar", data: [5, 10, 0, 20, 15, 8, 12],
+             itemStyle: { color: "#32CD32" } }]
+});
+
+    const map = L.map('map').setView([16.0471, 108.2062], 6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+
+    window.locateUser = () => {
+      map.locate({ setView: true, maxZoom: 12 });
+      map.on('locationfound', e => {
+        L.marker(e.latlng).addTo(map).bindPopup("Bạn đang ở đây!").openPopup();
+      });
+    }
+
+  });
+</script>
+
+
+</body>
+</html>
